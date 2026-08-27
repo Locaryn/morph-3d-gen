@@ -71,42 +71,9 @@ pub fn list_3d_models() -> Vec<String> {
     models
 }
 
-pub async fn generate_3d_model(req: Model3DGenRequest) -> Result<Model3DGenResult, String> {
-    let out_dir = req.output_dir.unwrap_or_else(|| {
-        if let Ok(media) = std::env::var("LOCARYN_EXTENSION_MEDIA_DIR") {
-            PathBuf::from(media)
-        } else {
-            std::env::current_dir()
-                .unwrap_or_else(|_| PathBuf::from("."))
-                .join("output")
-        }
-    });
-
-    std::fs::create_dir_all(&out_dir)
-        .map_err(|e| format!("Impossible de créer le dossier de sortie: {e}"))?;
-
-    let timestamp = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap_or_default()
-        .as_millis();
-
-    let fmt = match req.format.to_lowercase().as_str() {
-        "obj" => "obj",
-        "gltf" => "gltf",
-        _ => "glb",
-    };
-
-    let out_file = out_dir.join(format!("mesh_{timestamp}.{fmt}"));
-
-    // Write a dummy GLB or mesh header if needed
-    if !out_file.exists() {
-        let _ = std::fs::write(&out_file, b"glTF-3D-ASSET-LOCARYN");
-    }
-
-    Ok(Model3DGenResult {
-        model_path: out_file,
-        vertex_count: if req.quality == "fast" { 8400 } else { 24600 },
-        format: fmt.to_string(),
-        preview_image: None,
-    })
+/// Non implemente. La signature est conservee pour que l'interface et le
+/// serveur MCP gardent leur forme, mais l'appel echoue franchement plutot
+/// que de fabriquer un resultat.
+pub async fn generate_3d_model(_req: Model3DGenRequest) -> Result<Model3DGenResult, String> {
+    Err("La generation 3D n'est pas implementee : ce morph n'embarque aucun moteur de maillage. Aucun fichier n'a ete produit.".into())
 }
