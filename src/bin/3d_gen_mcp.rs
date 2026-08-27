@@ -1,4 +1,4 @@
-//! Stdio MCP server shipped by plugin-3d-gen.
+//! Stdio MCP server shipped by morph-3d-gen.
 use locaryn_plugin_3d_gen::{generate_3d_model, list_3d_models, Model3DGenRequest};
 use serde_json::{json, Value};
 use std::io::Write;
@@ -36,7 +36,7 @@ async fn handle_request(request: Value) -> Value {
             json!({
                 "protocolVersion": "2025-06-18",
                 "capabilities": { "tools": {} },
-                "serverInfo": { "name": "plugin-3d-gen", "version": VERSION }
+                "serverInfo": { "name": "morph-3d-gen", "version": VERSION }
             }),
         ),
         "tools/list" => success(id, tools_list()),
