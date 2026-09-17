@@ -2,7 +2,7 @@
   "$schema": "https://locaryn.dev/schema/morph.json/v0.1",
   "apiVersion": "0.1",
   "name": "morph-3d-gen",
-  "version": "2.1.0-beta.1",
+  "version": "2.2.0",
   "description": "NON FONCTIONNEL (squelette d'API) — Extension autonome de génération d'objets et maillages 3D (InstantMesh, TripoSR, Shap-E, GLTF/OBJ) avec son interface de studio intégrée. Aucun moteur n'est embarqué : les appels échouent explicitement au lieu de fabriquer un résultat.",
   "author": "Locaryn Team",
   "license": "Apache-2.0",
@@ -63,18 +63,19 @@
         "tag": "locaryn-3d-gen-panel",
         "hint": "Génération et visualisation de maillages 3D"
       }
-    ],
-    "nav_items": [
-      {
-        "id": "studio",
-        "label": "Studio de génération",
-        "icon": "image"
-      }
     ]
   },
   "beta": true,
   "stability": "untested",
   "versions": [
+    {
+      "version": "2.2.0",
+      "is_beta": false,
+      "summary": "L'interface Studio n'affiche plus jamais un fichier fabriqué quand le pont d'extension est indisponible : elle échoue franchement, comme le fait déjà le moteur. Retire le doublon d'entrée « studio » du menu, source d'une mise en page cassée (Locaryn/Locaryn#7).",
+      "tag": "v2.2.0",
+      "released_at": "2026-09-17",
+      "install_source": "Locaryn/morph-3d-gen#v2.2.0"
+    },
     {
       "version": "2.1.0-beta.1",
       "is_beta": true,

@@ -112,6 +112,15 @@
   border-radius: var(--radius, 12px);
   text-align: center;
 }
+.error-card {
+  padding: 16px 20px;
+  background: rgba(240, 100, 100, 0.08);
+  border: 1px solid rgba(240, 100, 100, 0.25);
+  border-radius: var(--radius, 12px);
+  color: #f08a8a;
+  font-size: 13px;
+  line-height: 1.5;
+}
 `;
 
   class Locaryn3DGenPanel extends HTMLElement {
@@ -123,6 +132,7 @@
       this.quality = "detailed";
       this.isGenerating = false;
       this.lastResult = null;
+      this.error = null;
     }
 
     connectedCallback() {
@@ -133,20 +143,21 @@
       if (!this.prompt.trim() || this.isGenerating) return;
       this.isGenerating = true;
       this.render();
+      this.error = null;
       try {
         const bridge = window.locaryn || window.LocarynPluginAPI;
-        if (bridge && bridge.invokeExtensionTool) {
-          const res = await bridge.invokeExtensionTool("generate_3d_model", {
-            prompt: this.prompt,
-            format: this.format,
-            quality: this.quality
-          });
-          this.lastResult = typeof res === "string" ? JSON.parse(res) : res;
-        } else {
-          this.lastResult = { model_path: `output/mesh_${Date.now()}.${this.format}`, vertex_count: 18400, format: this.format };
+        if (!bridge || !bridge.invokeExtensionTool) {
+          throw new Error("Le pont d'extension n'est pas disponible dans ce contexte.");
         }
+        const res = await bridge.invokeExtensionTool("generate_3d_model", {
+          prompt: this.prompt,
+          format: this.format,
+          quality: this.quality
+        });
+        this.lastResult = typeof res === "string" ? JSON.parse(res) : res;
       } catch (err) {
-        alert("Erreur de génération 3D: " + err);
+        this.lastResult = null;
+        this.error = err && err.message ? err.message : String(err);
       } finally {
         this.isGenerating = false;
         this.render();
@@ -194,6 +205,10 @@
           <button class="btn-primary" id="ig-gen-btn" ${this.isGenerating || !this.prompt.trim() ? "disabled" : ""}>
             ${this.isGenerating ? "Génération 3D en cours..." : "Générer le modèle 3D"}
           </button>
+
+          ${this.error ? `
+            <div class="error-card">${this.error}</div>
+          ` : ""}
 
           ${this.lastResult ? `
             <div class="result-card">
